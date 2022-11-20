@@ -21,7 +21,7 @@ public class EnemyStateController : MonoBehaviour
         switch (newState)
         {
             case EnemyStates.Idle:
-                animator.Play(Constants.IDLE_ANIMATION);
+                animator.Play(Constants.BOT_IDLE_ANIMATION);
                 break;
 
             case EnemyStates.Dead:

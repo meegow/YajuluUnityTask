@@ -64,19 +64,19 @@ public class PlayerStateController : MonoBehaviour
         switch (newState)
         {
             case PlayerStates.ForwardMovement:
-                animator.Play("Idle");
+                animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 break;
 
             case PlayerStates.LeftMovement:
-                animator.Play("Idle");
+                animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 break;
 
             case PlayerStates.RightMovement:
-                 animator.Play("Idle");
+                 animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 break;
 
             case PlayerStates.Falling:
-                animator.Play("Falling Idle");
+                animator.Play(Constants.PLAYER_FALLING_ANIMATION);
                 break;
 
             case PlayerStates.Dead:
