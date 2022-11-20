@@ -162,7 +162,6 @@ public class PlayerStateController : MonoBehaviour
            
                     break;
             }
-       // }
       
         // Value of true means 'Abort'. Value of false means 'Continue'.
         return abortStateTransition;

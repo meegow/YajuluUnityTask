@@ -6,14 +6,28 @@ public class GameManager : MonoBehaviour
 {
     public static bool startGamePlay;
 
+    void OnEnable() 
+    {
+        PlayerHealth.onGameOver += GameOver;
+    }
+
+    void OnDisable() 
+    {
+        PlayerHealth.onGameOver -= GameOver;
+    }
+
     void Start()
     {
         startGamePlay = true;
     }
-
-    // Update is called once per frame
-    void Update()
+    
+    void GameOver()
     {
-        
+        startGamePlay = false;
+    }
+
+    void OnStartGamePlay()
+    {
+        startGamePlay = true;
     }
 }
