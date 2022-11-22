@@ -166,42 +166,4 @@ public class PlayerStateController : MonoBehaviour
         // Value of true means 'Abort'. Value of false means 'Continue'.
         return abortStateTransition;
     }
-
-    // /// <summary>
-    // /// Event listener trigger at end of slash animation
-    // /// </summary>
-    // public void SlashJumpAnimation()
-    // {
-    //     animator.Play("Jump");
-    // }
-
-    // public void CheckGroundState()
-    // {
-    //     if (currentState.Equals(PlayerStates.VerticalDash))
-    //     {
-    //         ChangePlayerState(PlayerStates.Stunned);
-    //     }
-    //     else if(currentState.Equals(PlayerStates.Jumping) ||currentState.Equals(PlayerStates.SwingWeapon) ||currentState.Equals(PlayerStates.Bouncing))
-    //     {
-    //         ChangePlayerState(PlayerStates.Run);
-    //     }
-
-    //     isGrounded = true;
-    //     maxConsecutiveBounces = 0;
-    //     IsJumping = false;
-
-    //     if (GameManager.Instance.InGameMode)
-    //     {
-    //         UIManager.Instance.JumpingImage();
-    //     }
-        
-    // }
-
-    // /// <summary>
-    // /// Event listener triggered from test manager
-    // /// </summary>
-    // public void TogglePlayerInvincibility()
-    // {
-    //     isInvincible = !isInvincible;
-    // }
 }

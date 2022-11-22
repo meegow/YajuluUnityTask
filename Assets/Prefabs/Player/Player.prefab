@@ -988,9 +988,9 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &3119125426145935406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1041,7 +1041,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3119125426997611978}
-  - component: {fileID: 3119125426997611977}
+  - component: {fileID: 4188260862963206518}
   m_Layer: 7
   m_Name: GroundChecker
   m_TagString: Untagged
@@ -1057,15 +1057,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3119125426997611979}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.678, z: 0}
+  m_LocalPosition: {x: 0, y: -0.585, z: 0}
   m_LocalScale: {x: 0.25, y: 0.1, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3119125426145935379}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3119125426997611977
-BoxCollider:
+--- !u!136 &4188260862963206518
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1074,8 +1074,9 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Radius: 0.41
+  m_Height: 0.5
+  m_Direction: 0
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3128252545892940941
 GameObject:
