@@ -6,15 +6,32 @@ public class InputManager : MonoBehaviour
 {
     [SerializeField] private PlayerStateController playerStateController;
 
-    void Start()
-    {
-        
-    }
+    public delegate void OnPlatformRotationInput(bool rotateLeft);
+    public static OnPlatformRotationInput onPlatformRotationInput;
 
 
     void Update()
     {
         PlayerInput();
+        FlipPlatformInput();
+    }
+
+    void FlipPlatformInput()
+    {
+        if(!GameManager.startGamePlay)
+        {
+            return;
+        }
+
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            onPlatformRotationInput?.Invoke(true);
+        }
+        else if(Input.GetKeyDown(KeyCode.E))
+        {
+            onPlatformRotationInput?.Invoke(false);
+        }
+
     }
 
     void PlayerInput()
@@ -24,7 +41,7 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        float horizontalAxis = Input.GetAxisRaw("Horizontal");
+        float horizontalAxis = Input.GetAxisRaw(Constants.HORIZONTAL_INPUT_AXIS);
 
         if(horizontalAxis != 0)
         {
@@ -41,6 +58,5 @@ public class InputManager : MonoBehaviour
         {
             playerStateController.ChangePlayerState(PlayerStates.ForwardMovement);
         }
-
     }
 }

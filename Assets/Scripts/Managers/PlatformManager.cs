@@ -4,21 +4,27 @@ using UnityEngine;
 
 public class PlatformManager : MonoBehaviour
 {
-    public Transform player;
     public Transform platformRoot;
     public Transform[] platforms;
 
     private int platformIndex;
     private float platformWidth;
+    private float targetRotation = 1;
+    private float targetAngle;
     private bool reverseShuffle;
+    private bool canRotatePlatform;
+    private bool rotatePlatformLeft;
+    [SerializeField] private float platformRotationSpeed;
 
     private void OnEnable()
     {
+        InputManager.onPlatformRotationInput += StartFlipPlatform;
         PlatformRepositionCollider.onRepositionPlatform += RepositionPlatform;
     }
 
     private void OnDisable()
     {
+        InputManager.onPlatformRotationInput -= StartFlipPlatform;
         PlatformRepositionCollider.onRepositionPlatform -= RepositionPlatform;
     }
 
@@ -29,11 +35,59 @@ public class PlatformManager : MonoBehaviour
 
     void Start()
     {
+        targetAngle = platformRoot.eulerAngles.z;
         platformWidth = platforms[0].GetComponent<BoxCollider>().bounds.size.z;
     }
-    
 
-    public void RepositionPlatform()
+    void Update()
+    {
+        FlipPlatform();
+    }
+    
+    void FlipPlatform()
+    {
+        float degreesPerSecond = platformRotationSpeed * Time.deltaTime;
+        platformRoot.rotation = Quaternion.RotateTowards(platformRoot.rotation, 
+            Quaternion.Euler(0f, 0f, targetAngle * targetRotation), degreesPerSecond);
+    }
+
+    void StartFlipPlatform(bool rotateLeft)
+    {
+        if(targetAngle == 360)
+        {
+            if(!rotatePlatformLeft && rotateLeft || rotatePlatformLeft && !rotateLeft)
+            {
+                targetAngle = 180;
+            }
+            else
+            {
+                targetAngle = 180;
+                platformRoot.eulerAngles = Vector3.zero;
+            }
+            
+        }
+        else
+        {
+            targetAngle += 180;
+        }
+   
+        if (rotateLeft && targetRotation > 0)
+        {
+            targetRotation *= -1;
+        }
+
+        if (!rotateLeft && targetRotation < 0)
+        {
+            targetRotation *= -1;
+        }
+        
+        // Debug.Log("targetAngle "+targetAngle);
+        // Debug.Log("targetRotation "+targetRotation);
+        rotatePlatformLeft = rotateLeft;
+        canRotatePlatform = true;
+    }
+
+    void RepositionPlatform()
     {
         if(platformIndex >= platforms.Length)
         {
