@@ -2,29 +2,21 @@
 
 public class PlayerStateController : MonoBehaviour
 {
-
-    // private bool isGrounded;
+    private bool isGrounded;
     private PlayerStates currentState = PlayerStates.ForwardMovement;
     private PlayerStates previousState = PlayerStates.ForwardMovement;
 
     [SerializeField] private Animator animator;
     [SerializeField] private Rigidbody rigidBody;
+    [SerializeField] private PlayerGroundCollider groundCollider;
 
     [Header("Player Actions")]
     [SerializeField] private PlayerMovement playerMovement;
 
-
-    // private void Awake()
-    // {
-    //     jumpBounceAction = GetComponent<PlayerJumpBounceAction>();
-    //     verticalDashAction = GetComponent<PlayerVerticalDash>();
-    //     playerStunned = GetComponent<PlayerStunned>();
-    //     deathAction = GetComponent<PlayerDeathAction>();
-    //     swingWeapon = GetComponent<PlayerSwingWeapon>();
-    //     playerInvincibility = GetComponent<PlayerInvincibility>();
-    //     playerJugerNut = GetComponent<PlayerJugerNut>();
-    //     jumpstartController = GetComponent<PlayerJumpstartController>();
-    // }
+    private void Awake()
+    {
+        groundCollider.SetRigidBody(rigidBody);
+    }
 
     void FixedUpdate()
     {
@@ -44,23 +36,30 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.RightMovement:
+            Debug.Log("RightMovement");
                 playerMovement.MovePlayer(rigidBody, 1, false);
                 break;
 
             case PlayerStates.Falling:
-                
                 break;
         }
     }
 
     public void ChangePlayerState(PlayerStates newState)
     {
+         Debug.Log("newState1 "+ newState);
+        if(newState == currentState)
+            return;
+
+ Debug.Log("newState2 "+ newState);
         if (checkIfAbortOnStateCondition(newState))
             return;
 
+ Debug.Log("newState3 "+ newState);
         if (!checkForValidStatePair(newState))
             return;
 
+ Debug.Log("newState4 "+ newState);
         switch (newState)
         {
             case PlayerStates.ForwardMovement:
@@ -68,15 +67,28 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.LeftMovement:
+                if(!isGrounded)
+                {
+                    return;
+                }
                 animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 break;
 
             case PlayerStates.RightMovement:
-                 animator.Play(Constants.PLAYER_IDLE_ANIMATION);
+                if(!isGrounded)
+                {
+                    return;
+                }
+                animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 break;
 
             case PlayerStates.Falling:
+                isGrounded = false;
                 animator.Play(Constants.PLAYER_FALLING_ANIMATION);
+                break;
+
+             case PlayerStates.Grounded:
+                isGrounded = true;
                 break;
 
             case PlayerStates.Dead:
@@ -99,10 +111,6 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.LeftMovement:
-                // if (newState.Equals(PlayerStates.Run))
-                //     returnVal = true;
-                // else
-                //     returnVal = false;
                 returnVal = true;
                 break;
 
@@ -111,11 +119,18 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.Falling:
-                if (newState.Equals(PlayerStates.ForwardMovement))
+                // The only states that can take over from Falling
+                if (newState.Equals(PlayerStates.RightMovement) || 
+                    newState.Equals(PlayerStates.LeftMovement) || 
+                    newState.Equals(PlayerStates.Grounded))
                     returnVal = true;
                 else
                     returnVal = false;
 
+                break;
+
+             case PlayerStates.Grounded:
+                returnVal = true;
                 break;
 
             case PlayerStates.Dead:
@@ -138,25 +153,27 @@ public class PlayerStateController : MonoBehaviour
             switch (newState)
             {
                 case PlayerStates.ForwardMovement:
+                    if(!isGrounded)
+                    {
+                        abortStateTransition = true;
+                    }
                     break;
 
                 case PlayerStates.LeftMovement:
-                    // if (!CanSwingWeapon)
-                    // {
-                    //     abortStateTransition = true;
-                    // }
+               
                     break;
 
                 case PlayerStates.RightMovement:
-                    // if(IsJumping || currentState.Equals(PlayerStates.Stunned))
-                    // {
-                    //     abortStateTransition = true;
-                    // }
+                
                     break;
 
                 case PlayerStates.Falling:
                
                     break;
+
+                case PlayerStates.Grounded:
+                
+                break;
 
                 case PlayerStates.Dead:
            

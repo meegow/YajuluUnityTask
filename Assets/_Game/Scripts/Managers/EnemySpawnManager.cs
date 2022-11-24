@@ -42,9 +42,9 @@ public class EnemySpawnManager : MonoBehaviour
     {
         enemyFlipDirection = 1;
         //StartCoroutine(SpawnEnemies(lanes));
-        Debug.Log("Execute");
-         SpawnEnemies(lanes);
-        //enemyFlipDirection = -1;
+        SpawnEnemies(lanes);
+        enemyFlipDirection = -1;
+        SpawnEnemies(lanes);
         //StartCoroutine(SpawnEnemies(lanes));
     }
     //bool setNeighbourEnemy;
