@@ -57,7 +57,7 @@ MonoBehaviour:
     preloadFrames: 2
     preloadDelay: 0
     limitInstances: 1
-    limitAmount: 30
+    limitAmount: 150
     limitFIFO: 1
     cullDespawned: 0
     cullAbove: 50

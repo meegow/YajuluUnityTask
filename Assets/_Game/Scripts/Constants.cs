@@ -14,5 +14,6 @@ public class Constants
     #endregion
 
     public const string PLAYER_TAG = "Player";
+    public const string BOTS_POOL = "Bots";
     public const string HORIZONTAL_INPUT_AXIS = "Horizontal";
 }
