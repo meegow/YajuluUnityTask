@@ -17,16 +17,16 @@ public class PlayerGroundCollider : MonoBehaviour
     {
         if (other.gameObject.layer.Equals(LayerMask.NameToLayer(Constants.PLATFORM_LAYER)))
         {
-            isGrounded = false;
+            isGrounded = true;
             stateController.ChangePlayerState(PlayerStates.Grounded);
         }
     }
 
     void Update() 
     {
-        if (rigidBody.velocity.y < -1 && !isGrounded)
+        if (rigidBody.velocity.y < -1 && isGrounded)
         {
-            isGrounded = true;
+            isGrounded = false;
             stateController.ChangePlayerState(PlayerStates.Falling);
         }
     }

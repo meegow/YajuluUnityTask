@@ -28,7 +28,7 @@ public class PlayerStateController : MonoBehaviour
         switch (currentState)
         {
             case PlayerStates.ForwardMovement:
-                playerMovement.MovePlayer(rigidBody, 1, true);
+                playerMovement.MovePlayer(rigidBody, 0, true);
                 break;
 
             case PlayerStates.LeftMovement:
@@ -36,7 +36,6 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.RightMovement:
-            Debug.Log("RightMovement");
                 playerMovement.MovePlayer(rigidBody, 1, false);
                 break;
 
@@ -47,19 +46,15 @@ public class PlayerStateController : MonoBehaviour
 
     public void ChangePlayerState(PlayerStates newState)
     {
-         Debug.Log("newState1 "+ newState);
         if(newState == currentState)
             return;
 
- Debug.Log("newState2 "+ newState);
         if (checkIfAbortOnStateCondition(newState))
             return;
 
- Debug.Log("newState3 "+ newState);
         if (!checkForValidStatePair(newState))
             return;
 
- Debug.Log("newState4 "+ newState);
         switch (newState)
         {
             case PlayerStates.ForwardMovement:
@@ -67,19 +62,18 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.LeftMovement:
-                if(!isGrounded)
+                if(isGrounded)
                 {
-                    return;
+                    animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 }
-                animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 break;
 
             case PlayerStates.RightMovement:
-                if(!isGrounded)
+                if(isGrounded)
                 {
-                    return;
+                    animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 }
-                animator.Play(Constants.PLAYER_IDLE_ANIMATION);
+                
                 break;
 
             case PlayerStates.Falling:

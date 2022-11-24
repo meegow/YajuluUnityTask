@@ -1119,7 +1119,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verticalMovementSpeed: 5
-  horizontalMovementSpeed: 15
+  horizontalMovementSpeed: 7
+  playerTiltAngle: 5
+  player: {fileID: 3119125426145935379}
 --- !u!114 &3119125427185467441
 MonoBehaviour:
   m_ObjectHideFlags: 0
