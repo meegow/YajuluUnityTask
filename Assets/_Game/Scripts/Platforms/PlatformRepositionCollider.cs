@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlatformRepositionCollider : MonoBehaviour
 {
-    private bool fisrtTimePlayerPass = true;
+    public bool fisrtTimePlayerPass;
 
     public delegate void OnRepositionPlatform();
     public static OnRepositionPlatform onRepositionPlatform;
@@ -18,8 +18,16 @@ public class PlatformRepositionCollider : MonoBehaviour
 
         if(!fisrtTimePlayerPass)
         {
+            StartCoroutine(RenableCollider());
             onRepositionPlatform?.Invoke();
         }
+    }
+
+    IEnumerator RenableCollider()
+    {
+        GetComponent<Collider>().enabled = false;
+        yield return new WaitForSeconds(2f);
+        GetComponent<Collider>().enabled = true;
     }
     
     private void OnTriggerExit(Collider other) 

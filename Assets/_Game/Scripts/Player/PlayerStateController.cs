@@ -2,12 +2,13 @@
 
 public class PlayerStateController : MonoBehaviour
 {
-    private bool isGrounded;
+    public bool IsGrounded{ get; set; }
     private PlayerStates currentState = PlayerStates.ForwardMovement;
     private PlayerStates previousState = PlayerStates.ForwardMovement;
 
     [SerializeField] private Animator animator;
     [SerializeField] private Rigidbody rigidBody;
+    [SerializeField] private PlayerStateVariable currentPlayerState;
     [SerializeField] private PlayerGroundCollider groundCollider;
 
     [Header("Player Actions")]
@@ -62,14 +63,14 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.LeftMovement:
-                if(isGrounded)
+                if(IsGrounded)
                 {
                     animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 }
                 break;
 
             case PlayerStates.RightMovement:
-                if(isGrounded)
+                if(IsGrounded)
                 {
                     animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 }
@@ -77,12 +78,12 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.Falling:
-                isGrounded = false;
+                IsGrounded = false;
                 animator.Play(Constants.PLAYER_FALLING_ANIMATION);
                 break;
 
              case PlayerStates.Grounded:
-                isGrounded = true;
+                IsGrounded = true;
                 break;
 
             case PlayerStates.Dead:
@@ -92,6 +93,7 @@ public class PlayerStateController : MonoBehaviour
 
         previousState = currentState;
         currentState = newState;
+        currentPlayerState.CurrentSate = currentState;
     } 
 
     bool checkForValidStatePair(PlayerStates newState)
@@ -147,7 +149,7 @@ public class PlayerStateController : MonoBehaviour
             switch (newState)
             {
                 case PlayerStates.ForwardMovement:
-                    if(!isGrounded)
+                    if(!IsGrounded)
                     {
                         abortStateTransition = true;
                     }

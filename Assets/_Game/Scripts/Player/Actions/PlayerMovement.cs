@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private PlayerStateController stateController;
     [SerializeField] private float verticalMovementSpeed;
     [SerializeField] private float horizontalMovementSpeed;
     [SerializeField] private float playerTiltAngle;
     [SerializeField] private Transform player;
+
+    void Awake()
+    {
+        stateController = GetComponent<PlayerStateController>();
+    }
 
     public void MovePlayer(Rigidbody rigidBody, int direction, bool isForwardMovement)
     {
@@ -18,8 +24,15 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        float horizontalSpeed = horizontalMovementSpeed;
+
+        if(!stateController.IsGrounded)
+        {
+            horizontalSpeed = horizontalMovementSpeed * 2f;
+        }
+
         rigidBody.MovePosition(transform.position + new Vector3(
-            direction * horizontalMovementSpeed, 0f, verticalMovementSpeed) * Time.deltaTime );
+            direction * horizontalSpeed, 0f, verticalMovementSpeed) * Time.deltaTime );
 
         player.rotation = Quaternion.RotateTowards(player.rotation, 
             Quaternion.Euler(0f, 0f, playerTiltAngle * direction * -1), 10f);

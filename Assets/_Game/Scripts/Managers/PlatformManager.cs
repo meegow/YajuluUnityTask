@@ -14,6 +14,7 @@ public class PlatformManager : MonoBehaviour
     private bool reverseShuffle;
     private bool canRotatePlatform;
     private bool rotatePlatformLeft;
+    [SerializeField] private Rigidbody playerRigiBody;
     [SerializeField] private float platformRotationSpeed;
 
     private void OnEnable()
@@ -43,12 +44,26 @@ public class PlatformManager : MonoBehaviour
     {
         FlipPlatform();
     }
-    
+
     void FlipPlatform()
     {
-        float degreesPerSecond = platformRotationSpeed * Time.deltaTime;
-        platformRoot.rotation = Quaternion.RotateTowards(platformRoot.rotation, 
-            Quaternion.Euler(0f, 0f, targetAngle * targetRotation), degreesPerSecond);
+        if(!canRotatePlatform)
+        {
+            return;
+        }
+
+        platformRoot.RotateAround(playerRigiBody.transform.position, Vector3.forward * targetRotation,
+            platformRotationSpeed * Time.deltaTime);
+
+        if(Vector3.Distance(platformRoot.eulerAngles, new Vector3(0,0,targetAngle)) < 8f)
+        {
+            platformRoot.eulerAngles = new Vector3(0,0,targetAngle);
+            canRotatePlatform = false;
+        }
+   
+        // float degreesPerSecond = platformRotationSpeed * Time.deltaTime;
+        // platformRoot.rotation = Quaternion.RotateTowards(platformRoot.rotation, 
+        //     Quaternion.Euler(0f, 0f, targetAngle * targetRotation), degreesPerSecond);
     }
 
     void StartFlipPlatform(bool rotateLeft)
@@ -64,25 +79,32 @@ public class PlatformManager : MonoBehaviour
                 targetAngle = 180;
                 platformRoot.eulerAngles = Vector3.zero;
             }
-            
         }
         else
         {
             targetAngle += 180;
         }
    
-        if (rotateLeft && targetRotation > 0)
+        // if (rotateLeft && targetRotation > 0)
+        // {
+        //     targetRotation *= -1;
+        // }
+
+        // if (!rotateLeft && targetRotation < 0)
+        // {
+        //     targetRotation *= -1;
+        // }
+        
+        if (rotateLeft && targetRotation < 0)
         {
             targetRotation *= -1;
         }
 
-        if (!rotateLeft && targetRotation < 0)
+        if (!rotateLeft && targetRotation > 0)
         {
             targetRotation *= -1;
         }
         
-        // Debug.Log("targetAngle "+targetAngle);
-        // Debug.Log("targetRotation "+targetRotation);
         rotatePlatformLeft = rotateLeft;
         canRotatePlatform = true;
     }
