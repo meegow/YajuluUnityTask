@@ -9,6 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 829429962d97ebb4e9df662555e58a37, type: 3}
-  m_Name: CurrentPlayerState
+  m_Script: {fileID: 11500000, guid: 0344b4e405ade374aa57825e986f3b63, type: 3}
+  m_Name: PlayerObject
   m_EditorClassIdentifier: 
+  gameObject: {fileID: 0}

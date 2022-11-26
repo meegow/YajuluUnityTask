@@ -14,7 +14,7 @@ public class PlatformManager : MonoBehaviour
     private bool reverseShuffle;
     private bool canRotatePlatform;
     private bool rotatePlatformLeft;
-    [SerializeField] private Rigidbody playerRigiBody;
+    [SerializeField] private GameObjectVariable player;
     [SerializeField] private float platformRotationSpeed;
 
     private void OnEnable()
@@ -52,7 +52,7 @@ public class PlatformManager : MonoBehaviour
             return;
         }
 
-        platformRoot.RotateAround(playerRigiBody.transform.position, Vector3.forward * targetRotation,
+        platformRoot.RotateAround(player.GameObjectTransform.position, Vector3.forward * targetRotation,
             platformRotationSpeed * Time.deltaTime);
 
         if(Vector3.Distance(platformRoot.eulerAngles, new Vector3(0,0,targetAngle)) < 8f)

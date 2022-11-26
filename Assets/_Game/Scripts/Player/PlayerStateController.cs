@@ -16,6 +16,7 @@ public class PlayerStateController : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Rigidbody rigidBody;
     [SerializeField] private Transform model;
+    [SerializeField] private GameObjectVariable player;
     [SerializeField] private PlayerGroundCollider groundCollider;
 
     [Header("Player Actions")]
@@ -24,6 +25,7 @@ public class PlayerStateController : MonoBehaviour
     
     private void Awake()
     {
+        player.ThisGameObject = this.gameObject;
         modelOriginPosition = model.transform.localPosition;
         isAnimationFinishPlaying = true;
         groundCollider.SetRigidBody(rigidBody);

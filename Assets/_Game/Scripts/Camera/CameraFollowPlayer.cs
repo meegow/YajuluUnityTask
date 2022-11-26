@@ -3,9 +3,9 @@ using UnityEngine;
 public class CameraFollowPlayer : MonoBehaviour
 {
     public Vector3 offsetFromPlayer;
-    public Transform player;
 
     private Transform thisTrans;
+    [SerializeField] private GameObjectVariable player;
 
     void Start()
     {
@@ -19,15 +19,6 @@ public class CameraFollowPlayer : MonoBehaviour
             return;
         }
 
-        transform.position = player.position + offsetFromPlayer;
+        transform.position = player.GameObjectTransform.position + offsetFromPlayer;
     }
-
-    /// <summary>
-    /// Set the player transform for the camera to follow
-    /// </summary>
-    /// <param name="player"></param>
-    // public void SetPlayer(Transform player)
-    // {
-    //     thos.player = player;
-    // }
 }
