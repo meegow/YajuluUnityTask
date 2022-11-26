@@ -8,12 +8,12 @@ public class GameManager : MonoBehaviour
 
     void OnEnable() 
     {
-        PlayerHealth.onGameOver += GameOver;
+        PlayerStateController.onGameOver += GameOver;
     }
 
     void OnDisable() 
     {
-        PlayerHealth.onGameOver -= GameOver;
+        PlayerStateController.onGameOver -= GameOver;
     }
 
     void Start()

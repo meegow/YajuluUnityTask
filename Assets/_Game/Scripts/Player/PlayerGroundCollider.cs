@@ -24,7 +24,7 @@ public class PlayerGroundCollider : MonoBehaviour
 
     void Update() 
     {
-        if (rigidBody.velocity.y < -1 && isGrounded)
+        if (rigidBody.velocity.y < -1)
         {
             isGrounded = false;
             stateController.ChangePlayerState(PlayerStates.Falling);

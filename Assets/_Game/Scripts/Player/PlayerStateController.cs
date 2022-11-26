@@ -6,19 +6,22 @@ public class PlayerStateController : MonoBehaviour
 {
     public bool IsGrounded{ get; set; }
     public bool isAnimationFinishPlaying{ get; set; }
+    public delegate void OnGameOver();
+    public static OnGameOver onGameOver;
 
+    private bool checkForIdleAnim;
     private Vector3 modelOriginPosition;
     private PlayerStates currentState = PlayerStates.ForwardMovement;
     private PlayerStates previousState = PlayerStates.ForwardMovement;
     [SerializeField] private Animator animator;
     [SerializeField] private Rigidbody rigidBody;
     [SerializeField] private Transform model;
-    [SerializeField] private PlayerStateVariable currentPlayerState;
     [SerializeField] private PlayerGroundCollider groundCollider;
 
     [Header("Player Actions")]
     [SerializeField] private PlayerMovement playerMovement;
-
+    [SerializeField] private PlayerFalling playerFalling;
+    
     private void Awake()
     {
         modelOriginPosition = model.transform.localPosition;
@@ -65,7 +68,10 @@ public class PlayerStateController : MonoBehaviour
         switch (newState)
         {
             case PlayerStates.ForwardMovement:
-                animator.Play(Constants.PLAYER_IDLE_ANIMATION);
+                if(isAnimationFinishPlaying)
+                {
+                    animator.Play(Constants.PLAYER_IDLE_ANIMATION);
+                }
                 break;
 
             case PlayerStates.LeftMovement:
@@ -85,25 +91,31 @@ public class PlayerStateController : MonoBehaviour
             case PlayerStates.Hurt:
                 animator.Play(Constants.PLAYER_HURT_ANIMATION);
                 isAnimationFinishPlaying = false;
+                checkForIdleAnim = true;
                 break;
 
             case PlayerStates.Falling:
                 IsGrounded = false;
+                playerFalling.StartFalling = true;
                 animator.Play(Constants.PLAYER_FALLING_ANIMATION);
                 break;
 
              case PlayerStates.Grounded:
                 IsGrounded = true;
+                playerFalling.StartFalling = false;
                 break;
 
             case PlayerStates.Dead:
                 animator.Play(Constants.PLAYER_DEATH_ANIMATION);
+                onGameOver?.Invoke();
+                playerFalling.StartFalling = false;
+                rigidBody.useGravity = false;
+                rigidBody.velocity = Vector3.zero;
                 break;
         }
 
         previousState = currentState;
         currentState = newState;
-        currentPlayerState.CurrentSate = currentState;
     } 
 
     bool checkForValidStatePair(PlayerStates newState)
@@ -131,12 +143,13 @@ public class PlayerStateController : MonoBehaviour
             case PlayerStates.Falling:
                 // The only states that can take over from Falling
                 if (newState.Equals(PlayerStates.RightMovement) || 
-                    newState.Equals(PlayerStates.LeftMovement) || 
+                    newState.Equals(PlayerStates.LeftMovement) ||
+                    newState.Equals(PlayerStates.Hurt) || 
+                    newState.Equals(PlayerStates.Dead) ||
                     newState.Equals(PlayerStates.Grounded))
                     returnVal = true;
                 else
                     returnVal = false;
-
                 break;
 
              case PlayerStates.Grounded:
@@ -144,11 +157,7 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.Dead:
-                // The only state that can take over from kill is resurrect
-                // if(newState.Equals(PlayerStates.Revive))
-                //     returnVal = true;
-                // else
-                //     returnVal = false;
+            
                 break;
 
         }
@@ -181,6 +190,10 @@ public class PlayerStateController : MonoBehaviour
                     break;
 
                 case PlayerStates.Falling:
+                    if(!isAnimationFinishPlaying)
+                    {
+                        abortStateTransition = true;
+                    }
                     break;
 
                 case PlayerStates.Grounded:
@@ -197,10 +210,21 @@ public class PlayerStateController : MonoBehaviour
 
     void FixPlayerModelPositionAfterAnimFinishPlaying()
     {
-        if(model.transform.localPosition != modelOriginPosition && IsGrounded
-            && isAnimationFinishPlaying)
+        if(model.transform.localPosition != modelOriginPosition && ((IsGrounded
+            && isAnimationFinishPlaying) || (!IsGrounded && isAnimationFinishPlaying)))
         {
             model.transform.localPosition = modelOriginPosition;
+        }
+
+        if(!checkForIdleAnim)
+        {
+            return;
+        }
+
+        if(isAnimationFinishPlaying & currentState.Equals(PlayerStates.ForwardMovement))
+        {
+            checkForIdleAnim = false;
+            animator.Play(Constants.PLAYER_IDLE_ANIMATION);
         }
     }
 }

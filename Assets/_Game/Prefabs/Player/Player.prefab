@@ -1034,6 +1034,7 @@ GameObject:
   - component: {fileID: 3119125426145935406}
   - component: {fileID: 3119125426145935405}
   - component: {fileID: 3119125427185467441}
+  - component: {fileID: 4034832006608813008}
   - component: {fileID: 2168612579367150373}
   m_Layer: 7
   m_Name: Player
@@ -1120,6 +1121,7 @@ MonoBehaviour:
   currentPlayerState: {fileID: 11400000, guid: 49f2e0338fcba2c4281adb3215d0bd7e, type: 2}
   groundCollider: {fileID: 2168612579367150373}
   playerMovement: {fileID: 3119125426145935405}
+  playerFalling: {fileID: 4034832006608813008}
 --- !u!114 &3119125426145935405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1132,7 +1134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3ad437e625e7f4e9f3c9538bece9bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verticalMovementSpeed: 7.5
+  verticalMovementSpeed: 10
   horizontalMovementSpeed: 8
   playerTiltAngle: 5
   player: {fileID: 3119125426145935379}
@@ -1149,6 +1151,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
+--- !u!114 &4034832006608813008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3119125426145935407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff086e38829559146b1d408bea867042, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fallingDamage: 10
+  timeBetweenDamageChecks: 2
 --- !u!114 &2168612579367150373
 MonoBehaviour:
   m_ObjectHideFlags: 0

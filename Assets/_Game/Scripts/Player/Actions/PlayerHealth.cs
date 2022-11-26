@@ -8,9 +8,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private PlayerStateController stateController;
     [SerializeField] private int health;
 
-    public delegate void OnGameOver();
-    public static OnGameOver onGameOver;
-
     void Awake()
     {
         maxHealth = health;
@@ -24,10 +21,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if(maxHealth <= 0)
         {
             stateController.ChangePlayerState(PlayerStates.Dead);
-            onGameOver?.Invoke();
             return;
         }
 
         stateController.ChangePlayerState(PlayerStates.Hurt);
     }
+
+   
 }
