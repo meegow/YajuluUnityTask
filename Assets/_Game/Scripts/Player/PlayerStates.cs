@@ -1,3 +1,3 @@
 
 public enum PlayerStates { Alive, Dead, ForwardMovement, LeftMovement, RightMovement, 
-    Falling, Grounded, Hurt}
+    Falling, Grounded, Hurt, Revive}

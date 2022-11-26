@@ -1695,8 +1695,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c0998617b6f6a4887d5ba75b97bda4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthBarFull: {r: 0.23529413, g: 0.86666673, b: 0.27450982, a: 1}
+  healthBarHalf: {r: 0.9150943, g: 0.09927912, b: 0.09927912, a: 1}
   scoreText: {fileID: 1128384024}
   distanceText: {fileID: 711749507}
+  healthSlider: {fileID: 4136017160141559910}
   score: {fileID: 11400000, guid: 4036adecc196c514098726da9b430328, type: 2}
   distance: {fileID: 11400000, guid: b7ccecbf11789314788b1b37bf90b36d, type: 2}
 --- !u!4 &1286130937
@@ -2875,7 +2878,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 100
   m_WholeNumbers: 0
-  m_Value: 100
+  m_Value: 69
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []

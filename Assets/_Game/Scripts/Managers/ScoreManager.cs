@@ -13,7 +13,7 @@ public class ScoreManager : MonoBehaviour
     
     void Awake()
     {
-        LoadGameStart();
+        ResetOnStartGamePlay();
     }
 
     void Update()
@@ -38,7 +38,7 @@ public class ScoreManager : MonoBehaviour
     }
 
 
-    void LoadGameStart()
+    void ResetOnStartGamePlay()
     {
         maxDistanceToIncreaseScoreHolder = maxDistanceToIncreaseScore;
         distance.FloatValue = score.FloatValue = 0;
