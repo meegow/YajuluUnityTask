@@ -15,7 +15,6 @@ public class EnemyColliderController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("OnTriggerEnter " );
         if(other.gameObject.TryGetComponent(out IDamageable idamageable))
         {
             idamageable.AddDamage(damageToPlayer);

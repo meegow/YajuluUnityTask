@@ -4,10 +4,29 @@ using UnityEngine;
 
 public class PlatformRepositionCollider : MonoBehaviour
 {
-    public bool fisrtTimePlayerPass;
+    public bool initialPlatformCollider;
+    private bool fisrtTimePlayerPass;
 
     public delegate void OnRepositionPlatform();
     public static OnRepositionPlatform onRepositionPlatform;
+
+    void OnEnable()
+    {
+        PlayerHealth.onGameOver += GameOver;
+    }
+
+    void OnDisable()
+    {
+        PlayerHealth.onGameOver -= GameOver;
+    }
+
+    void Awake()
+    {
+        if(initialPlatformCollider)
+        {
+            fisrtTimePlayerPass = true;
+        }
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -48,6 +67,9 @@ public class PlatformRepositionCollider : MonoBehaviour
     /// </summary>
     public void GameOver()
     {
-        fisrtTimePlayerPass = true;
+        if(initialPlatformCollider)
+        {
+            fisrtTimePlayerPass = true;
+        }
     }
 }
