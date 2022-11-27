@@ -31,7 +31,6 @@ public class InputManager : MonoBehaviour
         {
             onPlatformRotationInput?.Invoke(false);
         }
-
     }
 
     void PlayerInput()

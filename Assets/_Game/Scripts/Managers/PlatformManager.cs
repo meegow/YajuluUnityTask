@@ -23,6 +23,7 @@ public class PlatformManager : MonoBehaviour
     private void OnEnable()
     {
         UIGameOver.onResetGame += ResetPlatforms;
+        GameManager.onInitializeGame += InitializePlatforms;
         InputManager.onPlatformRotationInput += StartFlipPlatform;
         PlatformRepositionCollider.onRepositionPlatform += RepositionPlatform;
     }
@@ -30,14 +31,9 @@ public class PlatformManager : MonoBehaviour
     private void OnDisable()
     {
         UIGameOver.onResetGame -= ResetPlatforms;
+        GameManager.onInitializeGame -= InitializePlatforms;
         InputManager.onPlatformRotationInput -= StartFlipPlatform;
         PlatformRepositionCollider.onRepositionPlatform -= RepositionPlatform;
-    }
-
-    void Awake()
-    {
-        platformIndex = 0;
-        InitializePlatforms();
     }
 
     void Update()
@@ -57,11 +53,14 @@ public class PlatformManager : MonoBehaviour
             }
         }
 
+        this.platformIndex = 0;
+        reverseShuffle = false;
         onInitializePlatforms?.Invoke();
     }
 
     void InitializePlatforms()
     {
+        this.platformIndex = 0;
         targetAngle = platformRoot.eulerAngles.z;
         platformWidth = platforms[0].platform.GetComponent<BoxCollider>().bounds.size.z;
 

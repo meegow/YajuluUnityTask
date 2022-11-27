@@ -14,6 +14,7 @@ public class UIGamePlay : MonoBehaviour
     [SerializeField] private Text scoreText;
     [SerializeField] private Text distanceText;
     [SerializeField] private Slider healthSlider;
+    [SerializeField] private ScoreNotification scoreNotification;
     [Space]
     [Header("Scriptable Variables")]
     [SerializeField] private FloatVariable score;
@@ -26,12 +27,14 @@ public class UIGamePlay : MonoBehaviour
 
         PlayerHealth.onUpdatePlayerHealthBar += UpdatePlayerHealthUI;
         PlayerHealth.onInitializePlayerHealthBar += InitializePlayerHealthUI;
+        ScoreManager.onScoreIncrease += DisplayScoreNotification;
     }
 
     void OnDisable()
     {
         PlayerHealth.onUpdatePlayerHealthBar -= UpdatePlayerHealthUI;
         PlayerHealth.onInitializePlayerHealthBar -= InitializePlayerHealthUI;
+        ScoreManager.onScoreIncrease -= DisplayScoreNotification;
     }
 
     void Update()
@@ -65,5 +68,11 @@ public class UIGamePlay : MonoBehaviour
     {
         scoreText.text = score.FloatValue.ToString();
         distanceText.text = Mathf.Round(distance.FloatValue).ToString();
+    }
+
+    void DisplayScoreNotification(int addedValue)
+    {
+        scoreNotification.gameObject.SetActive(true);
+        scoreNotification.GetComponent<ScoreNotification>().SetAddedScore(addedValue);
     }
 }

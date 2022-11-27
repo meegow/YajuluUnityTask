@@ -131,6 +131,7 @@ public class PlayerStateController : MonoBehaviour
                 isAnimationFinishPlaying = true;
                 checkForIdleAnim = false;
                 model.transform.localPosition = modelOriginPosition;
+                model.transform.localEulerAngles = Vector3.zero;
                 animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 this.transform.position = initialPosition;
                 rigidBody.useGravity = true;

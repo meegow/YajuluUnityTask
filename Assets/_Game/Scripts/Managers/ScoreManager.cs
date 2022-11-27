@@ -8,6 +8,9 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private int maxDistanceToIncreaseScore;
     [SerializeField] private FloatVariable score;
     [SerializeField] private FloatVariable distance;
+
+    public delegate void OnScoreIncrease(int increaseValue);
+    public static OnScoreIncrease onScoreIncrease;
     
     void OnEnable()
     {
@@ -33,10 +36,11 @@ public class ScoreManager : MonoBehaviour
     {
         distance.FloatValue += distanceSpeedMultiplier * Time.deltaTime;
    
-        if(Mathf.Round(distance.FloatValue) == maxDistanceToIncreaseScoreHolder && Mathf.Round(distance.FloatValue) > 1)
+        if(Mathf.Round(distance.FloatValue) == maxDistanceToIncreaseScoreHolder && 
+            Mathf.Round(distance.FloatValue) > 1)
         {
+            onScoreIncrease?.Invoke(distanceScoreAddition);
             maxDistanceToIncreaseScoreHolder += maxDistanceToIncreaseScore;
-            score.FloatValue += distanceScoreAddition;
         }
     }
 
