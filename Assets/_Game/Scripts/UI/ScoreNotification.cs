@@ -23,13 +23,17 @@ public class ScoreNotification : MonoBehaviour
 
     void OnDisable()
     {
-        Debug.Log("OnDisable");
         score.FloatValue += distanceScoreAddition;
         moveTowardsTarget = false;
         this.rectTransform.position = initialPosition;
     }
 
     void Update()
+    {
+        MoveTowardsScoreUI();
+    }
+
+    void MoveTowardsScoreUI()
     {
         if(!moveTowardsTarget)
         {

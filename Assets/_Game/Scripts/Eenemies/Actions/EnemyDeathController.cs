@@ -1,12 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using PathologicalGames;
 
-public class EnemyDeathController : MonoBehaviour
+public class EnemyDeathController : MonoBehaviour, IOutOfScreenCollectable
 {
     public void KillCharacter()
     {
-        //TODO: Show Kill effetc and animation
-        Destroy(this.gameObject);
+        //TODO: Show Kill effect or death animation
+        RemoveOutOfScreen();
+    }
+
+    public void RemoveOutOfScreen()
+    {
+        PoolManager.Pools[Constants.BOTS_POOL].Despawn(this.transform);
     }
 }
