@@ -1122,6 +1122,7 @@ MonoBehaviour:
   groundCollider: {fileID: 2168612579367150373}
   playerMovement: {fileID: 3119125426145935405}
   playerFalling: {fileID: 4034832006608813008}
+  playerHealth: {fileID: 3119125427185467441}
 --- !u!114 &3119125426145935405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1163,7 +1164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff086e38829559146b1d408bea867042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fallingDamage: 10
+  fallingDamage: 20
   timeBetweenDamageChecks: 2
 --- !u!114 &2168612579367150373
 MonoBehaviour:

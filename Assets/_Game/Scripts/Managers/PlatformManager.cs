@@ -5,7 +5,10 @@ using UnityEngine;
 public class PlatformManager : MonoBehaviour
 {
     public Transform platformRoot;
-    public Transform[] platforms;
+    public Platform[] platforms;
+
+    public delegate void OnInitializePlatforms();
+    public static OnInitializePlatforms onInitializePlatforms;
 
     private int platformIndex;
     private float platformWidth;
@@ -19,12 +22,14 @@ public class PlatformManager : MonoBehaviour
 
     private void OnEnable()
     {
+        UIGameOver.onResetGame += ResetPlatforms;
         InputManager.onPlatformRotationInput += StartFlipPlatform;
         PlatformRepositionCollider.onRepositionPlatform += RepositionPlatform;
     }
 
     private void OnDisable()
     {
+        UIGameOver.onResetGame -= ResetPlatforms;
         InputManager.onPlatformRotationInput -= StartFlipPlatform;
         PlatformRepositionCollider.onRepositionPlatform -= RepositionPlatform;
     }
@@ -32,17 +37,45 @@ public class PlatformManager : MonoBehaviour
     void Awake()
     {
         platformIndex = 0;
-    }
-
-    void Start()
-    {
-        targetAngle = platformRoot.eulerAngles.z;
-        platformWidth = platforms[0].GetComponent<BoxCollider>().bounds.size.z;
+        InitializePlatforms();
     }
 
     void Update()
     {
         FlipPlatform();
+    }
+
+    void ResetPlatforms()
+    {
+        for (int platformIndex = 0; platformIndex < platforms.Length; platformIndex++)
+        {
+            platforms[platformIndex].ResetPosition();
+
+            if (platformIndex == 0)
+            {
+                platforms[platformIndex].repositionController.Reset();
+            }
+        }
+
+        onInitializePlatforms?.Invoke();
+    }
+
+    void InitializePlatforms()
+    {
+        targetAngle = platformRoot.eulerAngles.z;
+        platformWidth = platforms[0].platform.GetComponent<BoxCollider>().bounds.size.z;
+
+        for (int platformIndex = 0; platformIndex < platforms.Length; platformIndex++)
+        {
+            platforms[platformIndex].SetInitialPosition();
+
+            if (platformIndex == 0)
+            {
+                platforms[platformIndex].repositionController.Reset();
+            }
+        }
+
+        onInitializePlatforms?.Invoke();
     }
 
     void FlipPlatform()
@@ -120,12 +153,14 @@ public class PlatformManager : MonoBehaviour
 
         if(reverseShuffle)
         {
-            platforms[platformIndex].position = (Vector3)platforms[platformIndex - 1].position + newVector;
+            platforms[platformIndex].platform.position = 
+                (Vector3)platforms[platformIndex - 1].platform.position + newVector;
             reverseShuffle = false;
         }
         else
         {
-            platforms[platformIndex].position = (Vector3)platforms[platformIndex + 1].position + newVector;
+            platforms[platformIndex].platform.position = 
+                (Vector3)platforms[platformIndex + 1].platform.position + newVector;
             reverseShuffle = true;
         }
         

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
@@ -11,9 +9,14 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private FloatVariable score;
     [SerializeField] private FloatVariable distance;
     
-    void Awake()
+    void OnEnable()
     {
-        ResetOnStartGamePlay();
+        UIMainMenu.onStartGame += ResetOnStartGamePlay;
+    }
+
+    void OnDisable()
+    {
+        UIMainMenu.onStartGame -= ResetOnStartGamePlay;
     }
 
     void Update()
@@ -36,7 +39,6 @@ public class ScoreManager : MonoBehaviour
             score.FloatValue += distanceScoreAddition;
         }
     }
-
 
     void ResetOnStartGamePlay()
     {

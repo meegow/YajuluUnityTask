@@ -16,11 +16,21 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     void Awake()
     {
-        maxHealth = health;
-        onInitializePlayerHealthBar?.Invoke(maxHealth);
         stateController = GetComponent<PlayerStateController>();
     }
 
+    IEnumerator InitializeHealthBar()
+    {
+        yield return new WaitUntil(() => UIManager.isGamePlayCanvasActive);
+        onInitializePlayerHealthBar?.Invoke(maxHealth);
+    }
+
+    public void InitializeHealth()
+    {
+        maxHealth = health;
+        StartCoroutine(InitializeHealthBar());
+    }
+    
     public void AddDamage(int damageAmount)
     {
         maxHealth -= damageAmount;
@@ -34,11 +44,4 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         stateController.ChangePlayerState(PlayerStates.Hurt);
     }
-
-    void ResetOnStartGamePlay()
-    {
-        maxHealth = health;
-        onInitializePlayerHealthBar?.Invoke(maxHealth);
-    }
-   
 }

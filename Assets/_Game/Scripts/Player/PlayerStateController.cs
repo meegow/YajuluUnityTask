@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PlayerStateController : MonoBehaviour
 {
-    public bool IsGrounded{ get; set; }
     public bool isAnimationFinishPlaying{ get; set; }
     public delegate void OnGameOver();
     public static OnGameOver onGameOver;
 
     private bool checkForIdleAnim;
+    private Vector3 initialPosition;
     private Vector3 modelOriginPosition;
     private PlayerStates currentState = PlayerStates.ForwardMovement;
     private PlayerStates previousState = PlayerStates.ForwardMovement;
@@ -22,10 +22,24 @@ public class PlayerStateController : MonoBehaviour
     [Header("Player Actions")]
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private PlayerFalling playerFalling;
+    [SerializeField] private PlayerHealth playerHealth;
     
-    private void Awake()
+    void OnEnable()
+    {
+        UIGameOver.onResetGame += RevivePlayer;
+        UIMainMenu.onStartGame += InitializePlayerOnGameStart;
+    }
+
+    void OnDisable()
+    {
+        UIGameOver.onResetGame += RevivePlayer;
+        UIMainMenu.onStartGame -= InitializePlayerOnGameStart;
+    }
+
+    void Awake()
     {
         player.ThisGameObject = this.gameObject;
+        initialPosition = this.transform.position;
         modelOriginPosition = model.transform.localPosition;
         isAnimationFinishPlaying = true;
         groundCollider.SetRigidBody(rigidBody);
@@ -77,14 +91,14 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.LeftMovement:
-                if(IsGrounded && isAnimationFinishPlaying)
+                if(playerFalling.IsGrounded && isAnimationFinishPlaying)
                 {
                     animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 }
                 break;
 
             case PlayerStates.RightMovement:
-                if(IsGrounded && isAnimationFinishPlaying)
+                if(playerFalling.IsGrounded && isAnimationFinishPlaying)
                 {
                     animator.Play(Constants.PLAYER_IDLE_ANIMATION);
                 }
@@ -97,22 +111,29 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.Falling:
-                IsGrounded = false;
-                playerFalling.StartFalling = true;
+                playerFalling.PlayerFallingState(true);
                 animator.Play(Constants.PLAYER_FALLING_ANIMATION);
                 break;
 
              case PlayerStates.Grounded:
-                IsGrounded = true;
-                playerFalling.StartFalling = false;
+                playerFalling.PlayerFallingState(false);
                 break;
 
             case PlayerStates.Dead:
                 animator.Play(Constants.PLAYER_DEATH_ANIMATION);
-                onGameOver?.Invoke();
-                playerFalling.StartFalling = false;
+                playerFalling.PlayerFallingState(false);
                 rigidBody.useGravity = false;
                 rigidBody.velocity = Vector3.zero;
+                StartCoroutine(GameOverDelay());
+                break;
+
+            case PlayerStates.Revive:
+                isAnimationFinishPlaying = true;
+                checkForIdleAnim = false;
+                model.transform.localPosition = modelOriginPosition;
+                animator.Play(Constants.PLAYER_IDLE_ANIMATION);
+                this.transform.position = initialPosition;
+                rigidBody.useGravity = true;
                 break;
         }
 
@@ -159,61 +180,81 @@ public class PlayerStateController : MonoBehaviour
                 break;
 
             case PlayerStates.Dead:
-            
+                if (newState.Equals(PlayerStates.Revive))
+                    returnVal = true;
+                else
+                    returnVal = false;
+                break;
+
+            case PlayerStates.Revive:
+                if (newState.Equals(PlayerStates.ForwardMovement))
+                    returnVal = true;
+                else
+                    returnVal = false;
                 break;
 
         }
         return returnVal;
     }
 
-    // check if there is any reason this state should not be allowed to begin.
+    /// <summary>
+    /// Check if there is any reason this state should not be allowed to begin.
+    /// </summary>
+    /// <param name="newState">the new state of the player to transition to</param>
+    /// <returns>Value of true means 'Abort'. Value of false means 'Continue'.</returns>
     bool checkIfAbortOnStateCondition(PlayerStates newState)
     {
         bool abortStateTransition = false;
 
-            switch (newState)
-            {
-                case PlayerStates.ForwardMovement:
-                    if(!IsGrounded)
-                    {
-                        abortStateTransition = true;
-                    }
-                    break;
+        switch (newState)
+        {
+            case PlayerStates.ForwardMovement:
+                if(!playerFalling.IsGrounded)
+                {
+                    abortStateTransition = true;
+                }
+                break;
 
-                case PlayerStates.LeftMovement:
-               
-                    break;
+            case PlayerStates.LeftMovement:
+            
+                break;
 
-                case PlayerStates.RightMovement:
-                
-                    break;
+            case PlayerStates.RightMovement:
+            
+                break;
 
-                case PlayerStates.Hurt:        
-                    break;
+            case PlayerStates.Hurt:        
+                break;
 
-                case PlayerStates.Falling:
-                    if(!isAnimationFinishPlaying)
-                    {
-                        abortStateTransition = true;
-                    }
-                    break;
+            case PlayerStates.Falling:
+                if(!isAnimationFinishPlaying)
+                {
+                    abortStateTransition = true;
+                }
+                break;
 
-                case PlayerStates.Grounded:
-                    break;
+            case PlayerStates.Grounded:
+                break;
 
-                case PlayerStates.Dead:
-           
-                    break;
-            }
-      
-        // Value of true means 'Abort'. Value of false means 'Continue'.
+            case PlayerStates.Dead:
+                break;
+
+            case PlayerStates.Revive:
+                break;
+        }
+    
         return abortStateTransition;
     }
 
+    /// <summary>
+    /// Handles special cases and workaround for the following cases:
+    /// 1- Hurt animation makes model offset on z-axis after finish playing
+    /// 2- Handle playing the forward animation after finish playing hurt animation
+    /// </summary>
     void FixPlayerModelPositionAfterAnimFinishPlaying()
     {
-        if(model.transform.localPosition != modelOriginPosition && ((IsGrounded
-            && isAnimationFinishPlaying) || (!IsGrounded && isAnimationFinishPlaying)))
+        if(model.transform.localPosition != modelOriginPosition && ((playerFalling.IsGrounded
+            && isAnimationFinishPlaying) || (!playerFalling.IsGrounded && isAnimationFinishPlaying)))
         {
             model.transform.localPosition = modelOriginPosition;
         }
@@ -228,5 +269,26 @@ public class PlayerStateController : MonoBehaviour
             checkForIdleAnim = false;
             animator.Play(Constants.PLAYER_IDLE_ANIMATION);
         }
+    }
+
+    void InitializePlayerOnGameStart()
+    {
+        playerHealth.InitializeHealth();
+    }
+
+    void RevivePlayer()
+    {
+        ChangePlayerState(PlayerStates.Revive);
+    }
+
+    IEnumerator GameOverDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+        onGameOver?.Invoke();
+    }
+
+    public bool IsPlayerGrounded()
+    {
+        return playerFalling.IsGrounded;
     }
 }

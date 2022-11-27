@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float verticalMovementSpeed;
     [SerializeField] private float horizontalMovementSpeed;
     [SerializeField] private float playerTiltAngle;
+    [SerializeField] private float horizontalMovementSpeedOnFallingMultiplier;
     [SerializeField] private Transform player;
 
     void Awake()
@@ -26,9 +27,9 @@ public class PlayerMovement : MonoBehaviour
 
         float horizontalSpeed = horizontalMovementSpeed;
 
-        if(!stateController.IsGrounded)
+        if(!stateController.IsPlayerGrounded())
         {
-            horizontalSpeed = horizontalMovementSpeed * 2f;
+            horizontalSpeed = horizontalMovementSpeed * horizontalMovementSpeedOnFallingMultiplier;
         }
 
         rigidBody.MovePosition(transform.position + new Vector3(

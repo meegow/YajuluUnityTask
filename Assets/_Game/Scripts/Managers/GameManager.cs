@@ -1,24 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static bool startGamePlay;
 
+    public delegate void OnInitializeGame();
+    public static OnInitializeGame onInitializeGame;
+
     void OnEnable() 
     {
+        UIMainMenu.onStartGame += OnStartGamePlay;
         PlayerStateController.onGameOver += GameOver;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void OnDisable() 
     {
+        UIMainMenu.onStartGame -= OnStartGamePlay;
         PlayerStateController.onGameOver -= GameOver;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    void Start()
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        startGamePlay = true;
+        InitializeGame();
     }
     
     void GameOver()
@@ -29,5 +35,10 @@ public class GameManager : MonoBehaviour
     void OnStartGamePlay()
     {
         startGamePlay = true;
+    }
+
+    void InitializeGame()
+    {
+        onInitializeGame?.Invoke();
     }
 }

@@ -1,79 +1,63 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("Health Bar State Colors")]
-    public Color healthBarFull;
-    public Color healthBarHalf;
+    public static bool isGamePlayCanvasActive;
 
-    private int maxHealth;
-    private Image healthBarImage;
-
+    private GameObject mainMenuCanvasInstance;
+    private GameObject gamePlayCanvasInstance;
+    private GameObject gameOverCanvasInstance;
     [Space]
     [Header("UI Variables")]
-    [SerializeField] private Text scoreText;
-    [SerializeField] private Text distanceText;
-    [SerializeField] private Slider healthSlider;
-    [Space]
-    [Header("Scriptable Variables")]
-    [SerializeField] private FloatVariable score;
-    [SerializeField] private FloatVariable distance;
+    [SerializeField] private GameObject mainMenuCanvas;
+    [SerializeField] private GameObject gamePlayCanvas;
+    [SerializeField] private GameObject gameOverCanvas;
 
-     void OnEnable()
+    void OnEnable()
     {
-        PlayerHealth.onUpdatePlayerHealthBar += UpdatePlayerHealthUI;
-        PlayerHealth.onInitializePlayerHealthBar += InitializePlayerHealthUI;
+        UIMainMenu.onStartGame += StartGamePlay;
+        UIGameOver.onLoadMainMenu += InitializeUI;
+        PlayerStateController.onGameOver += GameOver;
+        GameManager.onInitializeGame += InitializeUI;
     }
 
     void OnDisable()
     {
-        PlayerHealth.onUpdatePlayerHealthBar -= UpdatePlayerHealthUI;
-        PlayerHealth.onInitializePlayerHealthBar -= InitializePlayerHealthUI;
+        UIMainMenu.onStartGame -= StartGamePlay;
+        UIGameOver.onLoadMainMenu -= InitializeUI;
+        PlayerStateController.onGameOver += GameOver;
+        GameManager.onInitializeGame -= InitializeUI;
     }
 
-    void Awake() 
+    void InitializeUI()
     {
-        healthBarImage = healthSlider.fillRect.GetComponent<Image>();
-    }
-
-    void UpdatePlayerHealthUI(int health)
-    {
-        healthSlider.value = health;
-
-        if (healthSlider.value <= maxHealth / 2)
+        if(gameOverCanvasInstance != null)
         {
-            healthBarImage.color = healthBarHalf;
-        }
-    }
-
-    void InitializePlayerHealthUI(int maxHealth)
-    {
-        this.maxHealth = maxHealth;
-        healthSlider.value = maxHealth;
-        healthBarImage.color = healthBarFull;
-    }
-
-    void Update()
-    {
-        if(!GameManager.startGamePlay)
-        {
-            return;
+            Destroy(gameOverCanvasInstance);
         }
 
-        SetScoreUI();
+        mainMenuCanvasInstance = Instantiate(mainMenuCanvas);
     }
 
-    void SetScoreUI()
+    void StartGamePlay()
     {
-        scoreText.text = score.FloatValue.ToString();
-        distanceText.text = Mathf.Round(distance.FloatValue).ToString();
+        if(mainMenuCanvasInstance != null)
+        {
+            Destroy(mainMenuCanvasInstance);
+        }
+
+        gamePlayCanvasInstance = Instantiate(gamePlayCanvas);
+        isGamePlayCanvasActive = true;
     }
 
-    void ResetOnStartGamePlay()
+      void GameOver()
     {
-        scoreText.text = distanceText.text = "0";
+        if(gamePlayCanvasInstance != null)
+        {
+            Destroy(gamePlayCanvasInstance);
+            isGamePlayCanvasActive = false;
+        }
+
+        gameOverCanvasInstance = Instantiate(gameOverCanvas);
     }
 }

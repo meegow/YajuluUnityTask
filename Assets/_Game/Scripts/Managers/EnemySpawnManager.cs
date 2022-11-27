@@ -23,6 +23,16 @@ public class EnemySpawnManager : MonoBehaviour
     public Transform platform_2;
     private Transform platformRoot;
 
+    private void OnEnable()
+    {
+        PlatformManager.onInitializePlatforms += InitializeSpawner;
+    }
+
+    private void OnDisable()
+    {
+        PlatformManager.onInitializePlatforms -= InitializeSpawner;
+    }
+
     void Awake()
     {
         enemyFlipDirection = 1;
@@ -30,57 +40,22 @@ public class EnemySpawnManager : MonoBehaviour
         laneLength = platform_1_lanes[0].laneEnd.position.z - platform_1_lanes[0].laneStart.position.z;
     }
 
-    private void Start() 
+    void InitializeSpawner()
     {
         platformRoot = platform_1;
-         SpawnPlatformEnemies(platform_1_lanes);
-        //platformRoot = platform_2;
-        //SpawnPlatformEnemies(platform_2_lanes);
+        SpawnPlatformEnemies(platform_1_lanes);
+        platformRoot = platform_2;
+        SpawnPlatformEnemies(platform_2_lanes);
     }
 
     public void SpawnPlatformEnemies(List<PlatformLane> lanes)
     {
         enemyFlipDirection = 1;
-        //StartCoroutine(SpawnEnemies(lanes));
         SpawnEnemies(lanes);
         enemyFlipDirection = -1;
         SpawnEnemies(lanes);
-        //StartCoroutine(SpawnEnemies(lanes));
     }
-    //bool setNeighbourEnemy;
-//     IEnumerator SpawnEnemies(List<PlatformLane> lanes)
-//     {
-//         SpawnEnemyInNewRow(lanes);
-
-//         while(!platformFullOfEnemies)
-//         {
-//             setNeighbourEnemy = Random.Range(1, 5) <= 3;
-// yield return new WaitForSeconds(2f);
-//             if(setNeighbourEnemy)
-//             {
-//                 currentLaneIndex = Random.Range(0, tempLanes.Count);
-//                 Vector3 spawnPosition = new Vector3(
-//                         tempLanes[currentLaneIndex].laneStart.position.x, 
-//                         tempLanes[currentLaneIndex].laneStart.position.y + (enemyYOffset * enemyFlipDirection),
-//                         enemyBotInstance.position.z);
-
-//                 enemyBotInstance = PoolManager.Pools[Constants.BOTS_POOL].Spawn(enemyBot, spawnPosition, 
-//                     Quaternion.identity);
-//                 enemyBotInstance.SetParent(platformRoot);
-//                 CheckEndOfPlatform(lanes);
-//             }
-//             else
-//             {
-//                 CheckEndOfPlatform(lanes);
-//             }
-
-            
-//         }
-
-//         enemyBotInstance = null;
-//         platformFullOfEnemies = false;
-//     }
-
+    
     void SpawnEnemies(List<PlatformLane> lanes)
     {
         SpawnEnemyInNewRow(lanes);
@@ -114,8 +89,8 @@ public class EnemySpawnManager : MonoBehaviour
 
     void CheckEndOfPlatform(List<PlatformLane> lanes)
     {
-        Debug.Log(enemyBotInstance.name + " position: "+Mathf.Abs(enemyBotInstance.localPosition.z));
-        Debug.Log(lanes[0].laneEnd.position.z - Mathf.Abs(enemyBotInstance.position.z));
+        // Debug.Log(enemyBotInstance.name + " position: "+Mathf.Abs(enemyBotInstance.localPosition.z));
+        // Debug.Log(lanes[0].laneEnd.position.z - Mathf.Abs(enemyBotInstance.position.z));
         platformFullOfEnemies = lanes[0].laneEnd.position.z - Mathf.Abs(enemyBotInstance.position.z) <= 
                     minDistanceToSpawnEnemyFromPlatformEnd;
 
@@ -148,7 +123,6 @@ public class EnemySpawnManager : MonoBehaviour
         enemyBotInstance = PoolManager.Pools[Constants.BOTS_POOL].Spawn(enemyBot, spawnPosition, 
             Quaternion.identity);
         enemyBotInstance.SetParent(platformRoot);
-        //FlipEnemyInstance();
         tempLanes.RemoveAt(currentLaneIndex);
     }
 
@@ -163,11 +137,5 @@ public class EnemySpawnManager : MonoBehaviour
         {
             tempLanes.Add(lanes[i]);
         }
-    }
-
-    void FlipEnemyInstance()
-    {
-        Vector3 localScale = enemyBotInstance.transform.localScale;
-        localScale.y *= enemyFlipDirection;
     }
 }

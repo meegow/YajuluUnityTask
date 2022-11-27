@@ -1,17 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerFalling : MonoBehaviour
 {
-    public bool StartFalling{ get; set; }
+    public bool IsGrounded{ get; set; }
 
+    private bool startFalling;
     private float timeBetweenDamageChecksHolder;
     private IDamageable idamageable;
     [SerializeField] private int fallingDamage;
     [SerializeField] private float timeBetweenDamageChecks;
 
-    private void Awake() 
+    void Awake() 
     {
         timeBetweenDamageChecksHolder = timeBetweenDamageChecks;
 
@@ -21,12 +20,10 @@ public class PlayerFalling : MonoBehaviour
         }
     }
 
-
     void Update() 
     {
-        if(!StartFalling)
+        if(!startFalling)
         {
-            timeBetweenDamageChecksHolder = timeBetweenDamageChecks;
             return;
         }
 
@@ -35,6 +32,18 @@ public class PlayerFalling : MonoBehaviour
         if(timeBetweenDamageChecksHolder <= 0)
         {
             idamageable.AddDamage(fallingDamage);
+            timeBetweenDamageChecksHolder = timeBetweenDamageChecks;
+        }
+    }
+
+    public void PlayerFallingState(bool isFalling)
+    {
+        startFalling = isFalling;
+        IsGrounded = true;
+
+        if(isFalling)
+        {
+            IsGrounded = false;
             timeBetweenDamageChecksHolder = timeBetweenDamageChecks;
         }
     }
